@@ -65,6 +65,17 @@ HAVING SUM(o.Total_Amount) > 300;
 •⁠  ⁠💾 SQL  
 •⁠  ⁠📄 CSV files
 
+## 🖼 ER Diagram
+
+The following ER Diagram represents the database structure of the Online Bookstore project.  
+It shows the relationships between Customers, Orders, and Books tables.
+
+•⁠  ⁠Customers (1) → Orders (Many)
+•⁠  ⁠Books (1) → Orders (Many)
+
+This diagram provides a clear visualization of primary keys and foreign key relationships.
+![ER Diagram](ER_Diagram.png)
+
 🚀 How to Run
 1. Open MySQL Workbench
 2. Import CSV files using Table Data Import Wizard: Books.csv, Customers.csv, Orders.csv
