@@ -1,3 +1,12 @@
+-- Project: Online Book Store SQL Analysis
+-- Description: SQL queries to analyze an online bookstore dataset.
+-- Skills Used: Joins, Aggregations, Window Functions, CTE
+-- Dataset Source: Dataset collected from a public GitHub repository.
+-- Original Source: GitHub - https://github.com/SatishDhawale/SQL_Resume_Project
+-- Note: The dataset was taken from GitHub, but all SQL queries and analysis were written by me for learning and practice purposes.
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
 -- Create Database
 CREATE DATABASE IF NOT EXISTS OnlineBooksStore;
 USE OnlineBooksStore;
