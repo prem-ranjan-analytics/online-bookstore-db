@@ -7,7 +7,17 @@ The project tracks stock, calculates total spending by customers, identifies ove
 ## 🗂 Tables
 •⁠  ⁠*Books* – Book details: Title, Author, Genre, Published Year, Price, Stock  
 •⁠  ⁠*Customers* – Customer info: Name, Email, Phone, City, Country  
-•⁠  ⁠*Orders* – Order info: Customer_ID, Book_ID, Quantity, Order_Date, Total_Amount  
+•⁠  ⁠*Orders* – Order info: Customer_ID, Book_ID, Quantity, Order_Date, Total_Amount 
+
+## 👨‍💻 SQL Concept Used
+•⁠  ⁠SELECT Statements
+•⁠  ⁠Filtering (WHERE)
+•⁠  ⁠Aggregations (SUM, AVG, COUNT)
+•⁠  ⁠GROUP BY and HAVING
+•⁠  ⁠JOINS
+•⁠  ⁠Subqueries
+•⁠  ⁠CTE (Common Table Expressions)
+•⁠  ⁠Window Functions
 
 ## 🔍 Key Queries
 
@@ -27,15 +37,7 @@ JOIN Books b ON b.Book_ID = o.Book_ID
 GROUP BY b.Book_ID, b.Title
 ORDER BY Total_Orders DESC;
 
-3. *Oversold books (Quantity > Stock)*
-
-SELECT b.Book_ID, b.Title, b.Stock, SUM(o.Quantity) AS Total_Ordered
-FROM Orders o
-JOIN Books b ON b.Book_ID = o.Book_ID
-GROUP BY b.Book_ID, b.Title, b.Stock
-HAVING SUM(o.Quantity) > b.Stock;
-
-4. *Stock remaining after all orders*
+3. *Stock remaining after all orders*
 
 SELECT b.Book_ID, b.Title, b.Stock AS Original_Stock, 
        COALESCE(SUM(o.Quantity), 0) AS Total_Ordered,
@@ -44,13 +46,69 @@ FROM Books b
 LEFT JOIN Orders o ON b.Book_ID = o.Book_ID
 GROUP BY b.Book_ID, b.Title, b.Stock;
 
-5. *Cities of customers who spent over $300*
+4. *Top 2 best-selling books in each genre*
+       
+SELECT *
+FROM (
+    SELECT b.Genre,
+           b.Title,
+           SUM(o.Quantity) AS Total_Sold,
+           ROW_NUMBER() OVER (
+               PARTITION BY b.genre
+               ORDER BY SUM(o.Quantity) DESC
+           ) AS rn
+    FROM Books b
+    JOIN Orders o 
+    ON b.Book_ID = o.Book_ID
+    GROUP BY b.genre, b.Title
+) t
+WHERE rn <= 2;
 
-SELECT DISTINCT c.City, SUM(o.Total_Amount) AS Total_Spent
-FROM Orders o
-JOIN Customers c ON o.Customer_ID = c.Customer_ID
-GROUP BY c.City
-HAVING SUM(o.Total_Amount) > 300;
+5. *Monthly sales and the difference compared to the previous month*
+
+SELECT Month,
+       Monthly_Sales,
+       ROUND(Monthly_Sales - LAG(Monthly_Sales) 
+       OVER (ORDER BY Month),2) AS Sales_Difference
+FROM (
+    SELECT DATE_FORMAT(Order_Date, '%Y-%m') AS Month,
+           ROUND(SUM(Total_Amount),2) AS Monthly_Sales
+    FROM Orders
+    GROUP BY DATE_FORMAT(Order_Date, '%Y-%m')
+) t;
+
+6. *Customers who placed the highest number of orders*
+
+WITH Customer_Orders AS (
+    SELECT c.Customer_ID,
+           c.Name,
+           COUNT(o.Order_ID) AS Total_Orders
+    FROM Customers c
+    JOIN Orders o
+    ON c.Customer_ID = o.Customer_ID
+    GROUP BY c.Customer_ID, c.Name
+)
+SELECT *
+FROM Customer_Orders
+ORDER BY Total_Orders DESC
+LIMIT 3;
+
+7. *The remaining stock using CTE*
+
+WITH Ordered_Quantity AS (
+    SELECT Book_ID,
+           SUM(Quantity) AS Total_Ordered
+    FROM Orders
+    GROUP BY Book_ID
+)
+SELECT b.Book_ID,
+       b.Title,
+       b.Stock,
+       COALESCE(o.Total_Ordered,0) AS Total_Ordered,
+       b.Stock - COALESCE(o.Total_Ordered,0) AS Remaining_Stock
+FROM Books b
+LEFT JOIN Ordered_Quantity o
+ON b.Book_ID = o.Book_ID;
 
 📊 Key Insights
 1. Top-selling books identified – Some books are consistently ordered more, indicating bestsellers.
