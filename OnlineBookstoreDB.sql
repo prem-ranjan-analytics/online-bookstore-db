@@ -5,7 +5,14 @@
 -- Original Source: GitHub - https://github.com/SatishDhawale/SQL_Resume_Project
 -- Note: The dataset was taken from GitHub, but all SQL queries and analysis were written by me for learning and practice purposes.
 
------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------
+
+-- Database Tables
+-- Books (Book_ID, Title, Author, Genre, Published_Year, Price, Stock)
+-- Customers (Customer_ID, Name, Email, Phone, City, Country)
+-- Orders (Order_ID, Customer_ID, Book_ID, Quantity, Order_Date, Total_Amount)
+
+-------------------------------------------------------------------------------------------------------------------------------------
 
 -- Create Database
 CREATE DATABASE IF NOT EXISTS OnlineBooksStore;
@@ -15,7 +22,9 @@ SELECT * FROM Books;
 SELECT * FROM Customers;
 SELECT * FROM Orders;
 
--- Basic Questions:
+-------------------------------------------------------------------------------------------------------------------------------------
+-- BASIC SQL ANALYSIS:
+-------------------------------------------------------------------------------------------------------------------------------------
 
 -- 1. Display all books with their stock:
 
@@ -58,7 +67,6 @@ WHERE Quantity > 1;
 SELECT sum(Stock) as 'Total_Stock'
 FROM books;
 
-
 -- 9. Find the average price of books in the "Fantasy" genre:
 
 SELECT ROUND(AVG(Price),2) AS Avg_Price_Book 
@@ -70,7 +78,6 @@ WHERE Genre = 'Fantasy';
 SELECT * FROM books 
 ORDER BY price DESC
 LIMIT 1;
-
 
 -- 11. Calculate the total revenue generated from all orders:
 
@@ -123,7 +130,9 @@ GROUP BY b.Book_ID, b.Title
 ORDER BY Total_Ordered DESC
 LIMIT 1;
 
--- Advance Questions:
+-------------------------------------------------------------------------------------------------------------------------------------
+-- ADVANCED SQL ANALYSIS:
+-------------------------------------------------------------------------------------------------------------------------------------
 
 -- 1. Retrieve the total number of books sold for each genre:
 
@@ -441,8 +450,10 @@ FROM Books b
 LEFT JOIN Ordered_Quantity o
 ON b.Book_ID = o.Book_ID;
 
-
--- Case Studies (Business Analysis)
+-------------------------------------------------------------------------------------------------------------------------------------
+-- BUSINESS CASE STUDIES
+-- Real-world business analysis using SQL
+-------------------------------------------------------------------------------------------------------------------------------------
 
 -- Case Study 1: Identify Top 5 Customers by Spending
 -- Find the top 5 customers who spent the most money on orders:
